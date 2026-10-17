@@ -7,7 +7,8 @@ import {
   CountEvent,
 } from '../types/shared';
 
-const BASE_URL = '/api';
+// Use VITE_API_URL when deployed (e.g. on Vercel pointing to Render) or fallback to local proxy /api
+const BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
 
 class ApiClient {
   private token: string | null = null;

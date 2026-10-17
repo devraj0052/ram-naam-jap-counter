@@ -16,11 +16,54 @@ try {
   process.exit(1);
 }
 
-// Global Middlewares
+// CORS Configuration supporting configured frontend URLs, Vercel deployments, and mobile/app requests
+const configuredOrigins = [
+  ENV.FRONTEND_URL,
+  ENV.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:8081',
+].filter(Boolean);
+
 app.use(cors({
-  origin: '*', // Allow web app, mobile app, and dev previews
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: (origin, callback) => {
+    // 1. Allow requests with no origin (mobile apps, Postman, curl, server-to-server)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    // 2. Allow if wildcard or development
+    if (ENV.FRONTEND_URL === '*' || ENV.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+
+    // 3. Exact configured origins (Vercel production URL, CLIENT_URL, etc.)
+    if (configuredOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // 4. Any Vercel deployment preview or production domain (*.vercel.app)
+    if (/^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(origin)) {
+      return callback(null, true);
+    }
+
+    // 5. Render web service preview / custom domains (*.onrender.com)
+    if (/^https:\/\/([a-z0-9-]+\.)*onrender\.com$/i.test(origin)) {
+      return callback(null, true);
+    }
+
+    // 6. Local development domains & IP ports
+    if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Blocked request from origin: ${origin}`);
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 200,
 }));
 
 app.use(express.json({ limit: '10mb' }));
@@ -61,11 +104,11 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-// Start listening
-const server = app.listen(ENV.PORT, () => {
+// Start listening on 0.0.0.0 and dynamic port
+const server = app.listen(ENV.PORT, '0.0.0.0', () => {
   console.log(`====================================================`);
   console.log(`  Shri Ram Naam Jap Backend API v2.0`);
-  console.log(`  Server running on http://localhost:${ENV.PORT}`);
+  console.log(`  Server running on http://0.0.0.0:${ENV.PORT}`);
   console.log(`  Environment: ${ENV.NODE_ENV}`);
   console.log(`====================================================`);
 });

@@ -1,10 +1,16 @@
 import { DatabaseSync } from 'node:sqlite';
+import fs from 'node:fs';
+import path from 'node:path';
 import { ENV } from './env.js';
 
 let dbInstance: DatabaseSync | null = null;
 
 export function getDb(): DatabaseSync {
   if (!dbInstance) {
+    const dbDir = path.dirname(path.resolve(ENV.DB_PATH));
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
     dbInstance = new DatabaseSync(ENV.DB_PATH);
     // Optimize performance and enforce integrity
     dbInstance.exec('PRAGMA journal_mode = WAL;');

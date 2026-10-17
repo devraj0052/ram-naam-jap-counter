@@ -550,15 +550,52 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 5000).OwningProcess | Stop-Proc
 
 ## 20. Production Deployment Guide
 
-### Frontend Deployment (Vercel / Netlify / Cloudflare Pages)
-1. Set build command: `npm run build` (in `client/`).
-2. Set output directory: `client/dist`.
-3. Add environment variable: `VITE_API_URL=https://your-backend-api.com/api`.
+### A. Backend Deployment to Render (Step-by-Step)
 
-### Backend Deployment (Render / Railway / Fly.io / VPS)
-1. Deploy `backend/` with Node.js runtime.
-2. Set environment variables from `backend/.env.example`.
-3. Start command: `node --import tsx src/server.ts` or compile via `tsc`.
+The backend is configured for deployment on [Render](https://render.com) as a Node.js Web Service or via the included `render.yaml` Blueprint.
+
+#### Method 1: Render Dashboard Manual Setup (Recommended)
+1. **Create Web Service**:
+   - Go to [dashboard.render.com](https://dashboard.render.com) and click **New +** -> **Web Service**.
+   - Connect your GitHub repository: `https://github.com/devraj0052/ram-naam-jap-counter`.
+2. **Configure Service Settings**:
+   - **Name**: `shri-ram-jap-backend` (or any custom name)
+   - **Region**: Choose the region closest to you (e.g., Singapore, Frankfurt, Oregon, Ohio).
+   - **Root Directory**: `backend` *(CRITICAL: must specify `backend`)*
+   - **Environment**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start` *(runs `node dist/server.js`)*
+   - **Plan**: `Free` (or `Starter` if using a Persistent Disk)
+3. **Environment Variables**:
+   Under **Environment Variables**, add:
+   | Key | Value | Description |
+   | :--- | :--- | :--- |
+   | `NODE_VERSION` | `22` | Requires Node.js >= 22 for native SQLite (`node:sqlite`) |
+   | `NODE_ENV` | `production` | Enables production mode & error masking |
+   | `PORT` | `10000` | Render default port (injected dynamically) |
+   | `JWT_SECRET` | `openssl rand -base64 32` | Generate a strong 32+ character random secret |
+   | `FRONTEND_URL` | `https://your-app.vercel.app` | Your deployed Vercel frontend URL (no trailing slash) |
+   | `CLIENT_URL` | `https://your-app.vercel.app` | Fallback URL for email verification links |
+   | `DB_PATH` | `ramjap.sqlite` | SQLite database file location (or persistent disk mount) |
+4. **Health Check Path**:
+   - Set **Health Check Path** to: `/api/health`
+5. **Database Persistence on Render**:
+   - **Free Tier (Ephemeral)**: Uses `DB_PATH=ramjap.sqlite`. Note that Render Free tier spins down on idle and disk resets on redeploys.
+   - **Persistent Disk (Production Safe)**: On a paid Render plan, add a Disk (e.g. 1 GB) mounted at `/var/data` and set `DB_PATH=/var/data/ramjap.sqlite`. SQLite will permanently persist all user accounts and counts across server restarts.
+   - **External PostgreSQL**: Alternatively, you can provision a Render PostgreSQL instance using the migration script at `backend/migrations/001_init_postgres.sql`.
+
+---
+
+### B. Frontend Deployment to Vercel (Step-by-Step)
+1. In [Vercel Dashboard](https://vercel.com), click **Add New...** -> **Project** and select this GitHub repository.
+2. Configure project:
+   - **Framework Preset**: `Vite`
+   - **Root Directory**: `client` *(CRITICAL: select `client` directory)*
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. Add Environment Variable:
+   - `VITE_API_URL` = `https://<your-render-backend>.onrender.com/api`
+4. Deploy! The included `client/vercel.json` automatically handles client-side SPA routing (`/verify-email`, `/reset-password`, etc.).
 
 ---
 
