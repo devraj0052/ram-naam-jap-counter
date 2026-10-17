@@ -1,0 +1,15 @@
+{
+  "name": "shri-ram-jap-platform",
+  "version": "1.0.0",
+  "description": "Shri Ram Naam Jap Counter - Responsive Website, PWA, Mobile App & Cloud Sync",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "npm --prefix backend run dev",
+    "build:backend": "npm --prefix backend run build",
+    "build:client": "npm --prefix client run build",
+    "test": "node backend/test/e2e.test.js"
+  }
+}
