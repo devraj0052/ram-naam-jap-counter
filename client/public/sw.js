@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shri-ram-jap-v2';
+const CACHE_NAME = 'shri-ram-jap-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -40,14 +40,19 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // For API calls: Network-First with offline fail-safe
+  // For API calls: Network-First with offline vs server error diagnosis
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request).catch(() => {
+        const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+        const msg = isOffline
+          ? 'You are currently offline. Local changes have been saved and will sync automatically when connected.'
+          : 'Unable to reach backend server. Please verify the backend is running on port 5000.';
         return new Response(
           JSON.stringify({
-            offline: true,
-            message: 'You are currently offline. Local changes have been saved and will sync automatically when connected.',
+            offline: isOffline,
+            error: msg,
+            message: msg,
           }),
           {
             status: 503,
