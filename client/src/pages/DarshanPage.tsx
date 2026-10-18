@@ -7,7 +7,7 @@ export const DarshanPage: React.FC = () => {
   const { selectedDarshanId, setSelectedDarshanId } = useJap();
   const { t } = useLanguage();
 
-  const darshanIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const darshanIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   return (
     <div className="w-full max-w-2xl mx-auto pb-24 sm:pb-8">

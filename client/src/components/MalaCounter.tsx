@@ -156,11 +156,11 @@ export const MalaCounter: React.FC<MalaCounterProps> = ({ onNavigate }) => {
             }}
           >
             {/* Sacred Darshan Backdrop Icon / Image */}
-            <div className="absolute inset-0 opacity-15 pointer-events-none mix-blend-overlay">
+            <div className="absolute inset-0 opacity-25 pointer-events-none mix-blend-overlay">
               <img
                 src={`/assets/ram/darshan_${selectedDarshanId}.png`}
                 alt="Shri Ram"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-top"
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}

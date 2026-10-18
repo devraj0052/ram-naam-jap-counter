@@ -29,6 +29,9 @@ export interface TranslationDictionary {
   profile: string;
   history: string;
   darshan: string;
+  divineDarshanTitle: string;
+  changeDarshan: string;
+  jaiShriRam: string;
   home: string;
   settings: string;
   fullName: string;
@@ -95,6 +98,9 @@ export const translations: Record<'en' | 'gu' | 'hi', TranslationDictionary> = {
     profile: 'My Profile & Account',
     history: 'Jap History & Stats',
     darshan: 'Divine Darshan',
+    divineDarshanTitle: 'Shri Ram Divine Darshan',
+    changeDarshan: 'Change Darshan',
+    jaiShriRam: 'Jai Shri Ram',
     home: 'Jap Counter',
     settings: 'Settings',
     fullName: 'Full Name',
@@ -159,6 +165,9 @@ export const translations: Record<'en' | 'gu' | 'hi', TranslationDictionary> = {
     profile: 'પ્રોફાઇલ અને ખાતું',
     history: 'જાપ ઇતિહાસ અને આંકડા',
     darshan: 'દિવ્ય દર્શન',
+    divineDarshanTitle: 'શ્રી રામ દિવ્ય દર્શન',
+    changeDarshan: 'દર્શન બદલો',
+    jaiShriRam: 'જય શ્રી રામ',
     home: 'જાપ કાઉન્ટર',
     settings: 'સેટિંગ્સ',
     fullName: 'પૂરું નામ',
@@ -223,6 +232,9 @@ export const translations: Record<'en' | 'gu' | 'hi', TranslationDictionary> = {
     profile: 'मेरी प्रोफाइल एवं खाता',
     history: 'जप इतिहास एवं आंकड़े',
     darshan: 'दिव्य दर्शन',
+    divineDarshanTitle: 'श्री राम दिव्य दर्शन',
+    changeDarshan: 'दर्शन बदलें',
+    jaiShriRam: 'जय श्री राम',
     home: 'जप काउंटर',
     settings: 'सेटिंग्स',
     fullName: 'पूरा नाम',
